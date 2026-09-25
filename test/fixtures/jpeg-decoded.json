@@ -1,0 +1,9 @@
+{
+  "decoder": "Pillow 12.3.0 / libjpeg",
+  "barsSourceSha256": "18b3bf648e5bbbc596fde07b8c5d70d75b5e4c12c689cfeef214cf1c44e62d78",
+  "chartSourceSha256": "09b8e59c72b8fc548d553c94019d80da581007432f0e944d98a3ac53ac1d5a03",
+  "chartEncoding": {
+    "quality": 92,
+    "subsampling": "4:2:0"
+  }
+}

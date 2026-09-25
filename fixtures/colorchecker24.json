@@ -1,0 +1,248 @@
+{
+  "version": 1,
+  "source": "https://babelcolor.com/index_htm_files/RGB%20Coordinates%20of%20the%20Macbeth%20ColorChecker.pdf",
+  "palette": "ColorChecker 2005, Table 2, sRGB (GMB), RGB8 display-referred values",
+  "origin": "Synthetic preview fixture, not a sensor capture or a certified calibration target.",
+  "geometry": {
+    "columns": 6,
+    "rows": 4,
+    "patchSize": 88,
+    "gap": 16,
+    "width": 640,
+    "height": 432,
+    "background": [
+      16,
+      16,
+      16
+    ]
+  },
+  "colors": [
+    [
+      115,
+      82,
+      68
+    ],
+    [
+      194,
+      150,
+      130
+    ],
+    [
+      98,
+      122,
+      157
+    ],
+    [
+      87,
+      108,
+      67
+    ],
+    [
+      133,
+      128,
+      177
+    ],
+    [
+      103,
+      189,
+      170
+    ],
+    [
+      214,
+      126,
+      44
+    ],
+    [
+      80,
+      91,
+      166
+    ],
+    [
+      193,
+      90,
+      99
+    ],
+    [
+      94,
+      60,
+      108
+    ],
+    [
+      157,
+      188,
+      64
+    ],
+    [
+      224,
+      163,
+      46
+    ],
+    [
+      56,
+      61,
+      150
+    ],
+    [
+      70,
+      148,
+      73
+    ],
+    [
+      175,
+      54,
+      60
+    ],
+    [
+      231,
+      199,
+      31
+    ],
+    [
+      187,
+      86,
+      149
+    ],
+    [
+      8,
+      133,
+      161
+    ],
+    [
+      243,
+      243,
+      242
+    ],
+    [
+      200,
+      200,
+      200
+    ],
+    [
+      160,
+      160,
+      160
+    ],
+    [
+      122,
+      122,
+      121
+    ],
+    [
+      85,
+      85,
+      85
+    ],
+    [
+      52,
+      52,
+      52
+    ]
+  ],
+  "ir8": 128,
+  "entries": [
+    {
+      "file": "colorchecker24-reference.png",
+      "kind": "reference",
+      "width": 640,
+      "height": 432,
+      "bytes": 12902,
+      "sha256": "09b8e59c72b8fc548d553c94019d80da581007432f0e944d98a3ac53ac1d5a03"
+    },
+    {
+      "file": "colorchecker24-bayer-rggb-12bit-in16-lsb-le-640x432.raw",
+      "kind": "CFA",
+      "reference": "colorchecker24-reference.png",
+      "width": 640,
+      "height": 432,
+      "pattern": "RGGB",
+      "bitDepth": 12,
+      "containerBits": 16,
+      "endian": "little",
+      "alignment": "lsb",
+      "gamma": 1,
+      "rowPitch": 1280,
+      "bytes": 552960,
+      "sha256": "69aabc5a099af49635991a96ffd9261c3f81ec1957d09019182e85ca7010bec3"
+    },
+    {
+      "file": "colorchecker24-bayer-rggb-12bit-packed-le-640x432.raw",
+      "kind": "CFA",
+      "reference": "colorchecker24-reference.png",
+      "width": 640,
+      "height": 432,
+      "pattern": "RGGB",
+      "bitDepth": 12,
+      "containerBits": 12,
+      "endian": "little",
+      "alignment": "lsb",
+      "gamma": 1,
+      "rowPitch": 960,
+      "bytes": 414720,
+      "sha256": "36a6ebc4a5821adcb5226319e2489fce670986b000c9277d6028d40166a16dcf"
+    },
+    {
+      "file": "colorchecker24-bayer-rggb-16bit-in16-lsb-le-640x432.raw",
+      "kind": "CFA",
+      "reference": "colorchecker24-reference.png",
+      "width": 640,
+      "height": 432,
+      "pattern": "RGGB",
+      "bitDepth": 16,
+      "containerBits": 16,
+      "endian": "little",
+      "alignment": "lsb",
+      "gamma": 1,
+      "rowPitch": 1280,
+      "bytes": 552960,
+      "sha256": "3cc4c5aa167125b5c876ce10b394e8faa58b2f6c8e238e68f39a5be35a5a627c"
+    },
+    {
+      "file": "colorchecker24-rgbir-rgbi-12bit-in16-lsb-le-640x432.raw",
+      "kind": "CFA",
+      "reference": "colorchecker24-reference.png",
+      "width": 640,
+      "height": 432,
+      "pattern": "RGBI",
+      "bitDepth": 12,
+      "containerBits": 16,
+      "endian": "little",
+      "alignment": "lsb",
+      "gamma": 1,
+      "rowPitch": 1280,
+      "bytes": 552960,
+      "sha256": "525bfe7be107e4b0c3964c7a57a2a153eb3abbf88797c2e7b5f84313a7ed7ced"
+    },
+    {
+      "file": "colorchecker24-rgbir-rgbi-12bit-packed-le-640x432.raw",
+      "kind": "CFA",
+      "reference": "colorchecker24-reference.png",
+      "width": 640,
+      "height": 432,
+      "pattern": "RGBI",
+      "bitDepth": 12,
+      "containerBits": 12,
+      "endian": "little",
+      "alignment": "lsb",
+      "gamma": 1,
+      "rowPitch": 960,
+      "bytes": 414720,
+      "sha256": "714d5f927e2cb16438172f3f834636a894d82aa84aa5725e375daaf323f50222"
+    },
+    {
+      "file": "colorchecker24-rgbir-rgbi-16bit-in16-lsb-le-640x432.raw",
+      "kind": "CFA",
+      "reference": "colorchecker24-reference.png",
+      "width": 640,
+      "height": 432,
+      "pattern": "RGBI",
+      "bitDepth": 16,
+      "containerBits": 16,
+      "endian": "little",
+      "alignment": "lsb",
+      "gamma": 1,
+      "rowPitch": 1280,
+      "bytes": 552960,
+      "sha256": "416790409639fe0e1698a8788569762dc5644c7e9e6d71b859f196652b74e296"
+    }
+  ]
+}

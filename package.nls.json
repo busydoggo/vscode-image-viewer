@@ -1,0 +1,15 @@
+{
+  "app.brand": "vs-image-viewer",
+  "app.description": "Image viewer for PNG / JPG / RAW CFA / RGB-IR / YUV with configurable layouts and bit depths.",
+  "app.files": "Image Files",
+  "app.name": "Image Viewer",
+  "app.properties": "Image Properties",
+  "command.coefficients": "Edit Demosaic Coefficients",
+  "command.import": "Import Image Files…",
+  "command.open": "Open with Image Viewer",
+  "command.properties": "Toggle Image Properties",
+  "command.refresh": "Reload Image",
+  "command.remove": "Remove from List",
+  "demosaic.schema.url": "./locales/generated/demosaic-schema.en.json",
+  "manifest.welcome": "Import an image to inspect its pixels.\n[Import Files](command:sensorViewer.import)\nSupports PNG, JPG, RAW, YUV and any file extension."
+}

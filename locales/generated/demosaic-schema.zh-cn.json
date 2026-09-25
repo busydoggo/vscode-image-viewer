@@ -1,0 +1,122 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Bayer 解马赛克系数",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "regularization",
+    "variationPenalty",
+    "directions"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "regularization": {
+      "type": "number",
+      "minimum": 0.01,
+      "maximum": 100,
+      "description": "采样量化步长平方的正则项倍数。"
+    },
+    "variationPenalty": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10,
+      "description": "抑制平滑颜色变化的过度锐化。"
+    },
+    "directions": {
+      "type": "object",
+      "description": "图像坐标顺时针，0° 向右，90° 向下，对向射线可独立配置。",
+      "additionalProperties": false,
+      "required": [
+        "0",
+        "45",
+        "90",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ],
+      "properties": {
+        "0": {
+          "$ref": "#/definitions/group"
+        },
+        "45": {
+          "$ref": "#/definitions/group"
+        },
+        "90": {
+          "$ref": "#/definitions/group"
+        },
+        "135": {
+          "$ref": "#/definitions/group"
+        },
+        "180": {
+          "$ref": "#/definitions/group"
+        },
+        "225": {
+          "$ref": "#/definitions/group"
+        },
+        "270": {
+          "$ref": "#/definitions/group"
+        },
+        "315": {
+          "$ref": "#/definitions/group"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "group": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "levels"
+      ],
+      "properties": {
+        "levels": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "strength",
+              "uniform",
+              "edgePower",
+              "tangentBias"
+            ],
+            "properties": {
+              "strength": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 4,
+                "description": "归一化梯度阈值，从 0 开始严格递增。"
+              },
+              "uniform": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "均匀权重比例，1 均匀，0 完全按边缘加权。"
+              },
+              "edgePower": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 4,
+                "description": "越大越抑制跨颜色边缘的采样。"
+              },
+              "tangentBias": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 4,
+                "description": "沿边缘方向的采样偏好。"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
