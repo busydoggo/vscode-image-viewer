@@ -2,6 +2,14 @@
   "version": 1,
   "regularization": 1,
   "variationPenalty": 2,
+  "antiAlias": {
+    "enabled": true,
+    "greenThreshold": 0.047058823529411764,
+    "chromaThreshold": 0.3137254901960784,
+    "directionFloor": 0.05,
+    "directionSpan": 0.25,
+    "syntheticWeight": 0.25
+  },
   "directions": {
     "0": {
       "levels": [

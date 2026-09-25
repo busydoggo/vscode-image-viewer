@@ -13,7 +13,7 @@ document.getElementById('app').innerHTML = `
     <div id="toolbarDisplay" class="toolbar-display" hidden><label for="displayChannel" class="toolbar-icon-label" tabindex="0" aria-label="${th('field.display')}" data-tooltip="${th('field.display')}">${icon('display')}<span class="sr-only">${th('field.display')}</span></label><select id="displayChannel" data-tooltip="${th('field.display')}"></select></div>
     <div id="toolbarCfa" class="toolbar-cfa" hidden></div>
   </header>
-  <div id="viewport" tabindex="0" aria-label="${th('viewer.canvas')}"><canvas id="canvas" hidden></canvas><div id="pixelGrid" aria-hidden="true" hidden></div><div id="pixelRulers" aria-hidden="true" hidden><canvas id="rulerX"></canvas><canvas id="rulerY"></canvas><span class="ruler-corner">X / Y</span></div><div id="message" role="status"><span class="eyebrow">${th('app.eyebrow')}</span><h2>${th('viewer.loading')}</h2></div><div id="comparison" hidden><span>RGB</span><span>IR</span></div></div>
+  <div id="viewport" tabindex="0" aria-label="${th('viewer.canvas')}"><canvas id="canvas" hidden></canvas><canvas id="scaledCanvas" hidden aria-hidden="true"></canvas><div id="pixelGrid" aria-hidden="true" hidden></div><div id="pixelRulers" aria-hidden="true" hidden><canvas id="rulerX"></canvas><canvas id="rulerY"></canvas><span class="ruler-corner">X / Y</span></div><div id="message" role="status"><span class="eyebrow">${th('app.eyebrow')}</span><h2>${th('viewer.loading')}</h2></div><div id="comparison" hidden><span>RGB</span><span>IR</span></div></div>
   <section id="playback" class="playback" aria-label="${th('player.label')}" hidden>
     <div class="playback-controls">
       <button id="play" aria-label="${th('player.play')}" title="${th('player.playTitle')}">${th('player.playButton')}</button>
@@ -80,13 +80,41 @@ const patternEditor = CfaEditor.create({ document, container: toolbarCfa, t, onC
 } });
 const toolbarTips = ViewerToolbar.tooltips({ document, root: toolbar, window });
 const canvas = $('canvas'), viewport = $('viewport'), ctx = canvas.getContext('2d', { willReadFrequently: true });
+// Keep native pixels separate from display reduction, including hover readouts and JPEG comparisons.
+const scaledCanvas = $('scaledCanvas'), scaledContext = scaledCanvas.getContext('2d');
+let presentationRevision = 0, reducedKey = '', reductionRequest = 0;
+function updateResampling() {
+  cancelAnimationFrame(reductionRequest);
+  const cssWidth = canvas.width * zoom, cssHeight = canvas.height * zoom;
+  scaledCanvas.style.width = `${cssWidth}px`; scaledCanvas.style.height = `${cssHeight}px`;
+  scaledCanvas.style.transform = canvas.style.transform;
+  canvas.style.imageRendering = PreviewResample.rendering(zoom);
+  const density = window.devicePixelRatio || 1;
+  const width = Math.max(1, Math.round(cssWidth * density)), height = Math.max(1, Math.round(cssHeight * density));
+  if (!valid || canvas.hidden || zoom >= 1 || width >= canvas.width || height >= canvas.height) {
+    scaledCanvas.hidden = true; canvas.style.opacity = ''; return;
+  }
+  const key = `${presentationRevision}:${width}:${height}`;
+  if (reducedKey === key) { scaledCanvas.hidden = false; canvas.style.opacity = '0'; return; }
+  // Coalesce wheel/resize events; pan changes reuse the same reduced raster.
+  scaledCanvas.hidden = true; canvas.style.opacity = '';
+  reductionRequest = requestAnimationFrame(() => {
+    if (!valid || canvas.hidden || presentationRevision !== Number(key.split(':')[0])) return;
+    const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const reduced = PreviewResample.area(pixels.data, canvas.width, canvas.height, width, height);
+    scaledCanvas.width = width; scaledCanvas.height = height;
+    scaledContext.putImageData(new ImageData(reduced, width, height), 0, 0);
+    reducedKey = key; scaledCanvas.hidden = false; canvas.style.opacity = '0';
+  });
+}
+function pixelsChanged() { presentationRevision++; updateResampling(); }
 const jpegRepair = $('jpegRepair'); jpegRepair.hidden = true; jpegRepair.setAttribute('aria-pressed', 'true');
 let jpegEnabled = true, jpegApplied = false, jpegFrame, jpegPaint = 0;
 async function paintJpeg() {
   const frame = jpegFrame, paint = ++jpegPaint, revision = generation;
   if (!frame || !valid) return;
   // Every comparison starts from the original decode, never from a previously repaired preview.
-  jpegApplied = false; ctx.putImageData(frame, 0, 0); clearPixel(); updatePixelStatus();
+  jpegApplied = false; ctx.putImageData(frame, 0, 0); pixelsChanged(); clearPixel(); updatePixelStatus();
   if (!jpegEnabled) return;
   const current = () => paint === jpegPaint && revision === generation && frame === jpegFrame;
   let pixels;
@@ -98,7 +126,7 @@ async function paintJpeg() {
   }
   if (!pixels || !current()) return;
   ctx.putImageData(new ImageData(pixels, frame.width, frame.height), 0, 0);
-  jpegApplied = true; clearPixel(); updatePixelStatus();
+  jpegApplied = true; pixelsChanged(); clearPixel(); updatePixelStatus();
 }
 jpegRepair.addEventListener('click', () => {
   jpegEnabled = !jpegEnabled; jpegRepair.setAttribute('aria-pressed', String(jpegEnabled));
@@ -261,6 +289,7 @@ function layout() {
   $('zoom').textContent = `${zoom < 0.01 ? Number((zoom * 100).toPrecision(2)) : Math.round(zoom * 100)}%`;
   $('fit').setAttribute('aria-pressed', String(fitMode));
   $('fit').setAttribute('data-tooltip', t(fitMode ? 'viewer.actualTitle' : 'viewer.fitTitle'));
+  updateResampling();
   updatePixelGrid();
   updatePixelStatus();
 }
@@ -334,20 +363,20 @@ window.addEventListener('message', event => {
     generation++;
     if (data.sequence) epoch = data.sequence.epoch;
     if (data.resetPlayback) player.reset(data.sequence);
-    if (!data.preserveImage || !valid) { valid = false; canvas.hidden = true; $('comparison').hidden = true; message(t('status.decoding')); }
+    if (!data.preserveImage || !valid) { valid = false; canvas.hidden = true; scaledCanvas.hidden = true; $('comparison').hidden = true; message(t('status.decoding')); }
     $('status').textContent = t('status.processing');
   }
-  if (data.type === 'invalid') { generation++; valid = false; player.reset(); canvas.hidden = true; $('comparison').hidden = true; message(t('status.invalid'), data.message); $('status').textContent = t('status.adjust'); $('dimensions').textContent = '—'; }
+  if (data.type === 'invalid') { generation++; valid = false; player.reset(); canvas.hidden = true; scaledCanvas.hidden = true; $('comparison').hidden = true; message(t('status.invalid'), data.message); $('status').textContent = t('status.adjust'); $('dimensions').textContent = '—'; }
   if (data.type !== 'image') return;
   if (!player.canPresent(data.requestId)) return;
   jpegFrame = undefined; jpegApplied = false; jpegRepair.hidden = true; jpegPaint++;
   const token = ++generation; const image = new Image();
   image.onload = () => {
     if (token !== generation) return;
-    if (image.naturalWidth * image.naturalHeight > SensorCore.MAX_PIXELS * (data.display === 'side' ? 2 : 1)) { valid = false; player.reset(); canvas.hidden = true; message(t('error.previewLimit'), t('error.maxPixels')); return; }
+    if (image.naturalWidth * image.naturalHeight > SensorCore.MAX_PIXELS * (data.display === 'side' ? 2 : 1)) { valid = false; player.reset(); canvas.hidden = true; scaledCanvas.hidden = true; message(t('error.previewLimit'), t('error.maxPixels')); return; }
     const changedSize = canvas.width !== image.naturalWidth || canvas.height !== image.naturalHeight;
     canvas.width = image.naturalWidth; canvas.height = image.naturalHeight; ctx.drawImage(image, 0, 0);
-    valid = true; canvas.hidden = false; $('message').hidden = true;
+    presentationRevision++; valid = true; canvas.hidden = false; $('message').hidden = true;
     displayedRevision = data.revision; rawPixels = ['CFA', 'YUV'].includes(data.kind); hoverTarget = undefined;
     side = data.display === 'side'; $('comparison').hidden = !side;
     $('dimensions').textContent = `${side ? canvas.width / 2 : canvas.width} × ${canvas.height}${side ? ' · RGB | IR' : ''}`;
@@ -355,14 +384,14 @@ window.addEventListener('message', event => {
     if (data.sequence) epoch = data.sequence.epoch;
     player.present(data.sequence, data.requestId);
     if (changedSize || fitMode) fit(); else layout();
-    // Lossless PNG and sensor reconstructions retain their existing pixel-exact rendering paths.
+    // Lossless PNG and sensor reconstructions retain untouched native pixels for inspection.
     if (data.kind === 'JPEG') {
       jpegFrame = ctx.getImageData(0, 0, canvas.width, canvas.height); jpegRepair.hidden = false;
       void paintJpeg();
     }
     vscode.postMessage({ type: 'metadata', revision: data.revision, width: canvas.width, height: canvas.height });
   };
-  image.onerror = () => { if (token !== generation) return; valid = false; player.reset(); canvas.hidden = true; message(t('error.decodeTitle'), t('error.decodeHint')); $('status').textContent = t('status.readFailed'); vscode.postMessage({ type: 'imageError', revision: data.revision }); };
+  image.onerror = () => { if (token !== generation) return; valid = false; player.reset(); canvas.hidden = true; scaledCanvas.hidden = true; message(t('error.decodeTitle'), t('error.decodeHint')); $('status').textContent = t('status.readFailed'); vscode.postMessage({ type: 'imageError', revision: data.revision }); };
   // VS Code serves file assets on a separate origin with CORS headers; opt in before canvas reads.
   image.crossOrigin = 'anonymous';
   image.src = data.source;

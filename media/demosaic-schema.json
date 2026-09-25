@@ -65,6 +65,55 @@
           "$ref": "#/definitions/group"
         }
       }
+    },
+    "antiAlias": {
+      "type": "object",
+      "description": "%demosaic.schema.antiAlias%",
+      "additionalProperties": false,
+      "required": [
+        "enabled",
+        "greenThreshold",
+        "chromaThreshold",
+        "directionFloor",
+        "directionSpan",
+        "syntheticWeight"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "%demosaic.schema.antiAliasEnabled%"
+        },
+        "greenThreshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "%demosaic.schema.greenThreshold%"
+        },
+        "chromaThreshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "%demosaic.schema.chromaThreshold%"
+        },
+        "directionFloor": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "%demosaic.schema.directionFloor%"
+        },
+        "directionSpan": {
+          "type": "number",
+          "minimum": 0.01,
+          "maximum": 1,
+          "description": "%demosaic.schema.directionSpan%"
+        },
+        "syntheticWeight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "%demosaic.schema.syntheticWeight%"
+        }
+      }
     }
   },
   "definitions": {

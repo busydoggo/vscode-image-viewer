@@ -417,7 +417,7 @@
   // The refinement uses the intra/inter-channel edge-preservation principle of
   // https://doi.org/10.1007/s10851-024-01204-y, not its full iterative optimizer.
   // Only Bayer layouts have the alternating green samples this method requires.
-  function bayerInterpolator(raw, width, height, pattern, sampleStep, coefficients) {
+  function bayerInterpolator(raw, width, height, pattern, sampleStep, coefficients, sampleConfidence) {
     const corners = cfaCorners(raw, width, height, pattern, sampleStep, coefficients);
     const green = new Float32Array(raw.length);
     const sampleFloor = Math.max(sampleStep, 1e-7), regularizer = coefficients.regularization * sampleFloor ** 2;
@@ -449,6 +449,15 @@
       const wv = 1 + policy.tangentBias * Demosaic.alignment(edge, 0, 1);
       const directed = choose(h, v, gradientH / wh, gradientV / wv);
       green[i] = directed + policy.uniform * ((h + v) / 2 - directed);
+    }
+    if ((coefficients.antiAlias || Demosaic.defaults.antiAlias).enabled) {
+      // Protect the complete downstream stencil around evidence-backed corners.
+      const protectedPixels = new Uint8Array(raw.length);
+      for (const i of corners.keys()) {
+        const x = i % width, y = Math.floor(i / width);
+        for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) protectedPixels[index(x + dx, y + dy)] = 1;
+      }
+      Demosaic.stabilizeGreen(raw, width, height, pattern, green, sampleStep, protectedPixels, coefficients, sampleConfidence);
     }
     function initial(x, y, channel) {
       const i = y * width + x, measured = channelAt(x, y);
@@ -679,13 +688,15 @@
     const greenAt = (x, y) => green[Math.max(0, Math.min(height - 1, y)) * width + Math.max(0, Math.min(width - 1, x))];
     // Anchor the virtual Bayer tile at R and resample B when the original tile is not Bayer-compatible.
     const bayerPattern = ['RGGB', 'GRBG', 'GBRG', 'BGGR'][pattern.indexOf('R')];
-    const mosaic = new Float32Array(raw.length);
+    const mosaic = new Float32Array(raw.length), confidence = new Uint8Array(raw.length);
     for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) {
       const channel = bayerPattern[(y % 2) * 2 + x % 2];
+      // A reconstructed virtual sample cannot carry the same evidence as an original measurement.
+      confidence[y * width + x] = Number(pattern[(y % 2) * 2 + x % 2] === channel);
       mosaic[y * width + x] = channel === 'G' ? greenAt(x, y)
         : guided(channel, x, y, [greenAt, (xx, yy) => linear(channel === 'R' ? 'B' : 'R', xx, yy)]);
     }
-    return { raw: mosaic, pattern: bayerPattern };
+    return { raw: mosaic, pattern: bayerPattern, confidence };
   }
   function decode(bytes, c, coefficients) {
     const info = analyze(c, c.offset + bytes.length);
@@ -745,7 +756,7 @@
       const settings = Demosaic.validate(coefficients || Demosaic.defaults);
       const visible = rgbir && c.width >= 2 && height >= 2 ? rgbirBayer(raw, c.width, height, pattern, sampleStep, settings) : { raw, pattern };
       let bayer = c.width >= 2 && height >= 2 && ['RGGB', 'BGGR', 'GRBG', 'GBRG'].includes(visible.pattern)
-        ? bayerInterpolator(visible.raw, c.width, height, visible.pattern, sampleStep, settings) : null;
+        ? bayerInterpolator(visible.raw, c.width, height, visible.pattern, sampleStep, settings, visible.confidence) : null;
       // Correct virtual-lattice errors before display; the correction also bounds edge overshoot.
       if (rgbir && bayer) {
         bayer = rgbirResidualInterpolator(bayer, raw, c.width, height, pattern);

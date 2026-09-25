@@ -65,6 +65,55 @@
           "$ref": "#/definitions/group"
         }
       }
+    },
+    "antiAlias": {
+      "type": "object",
+      "description": "Conservative directional anti-alias refinement. Older files use the built-in defaults.",
+      "additionalProperties": false,
+      "required": [
+        "enabled",
+        "greenThreshold",
+        "chromaThreshold",
+        "directionFloor",
+        "directionSpan",
+        "syntheticWeight"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Stabilize green reconstruction where directional candidates disagree; disable for a comparison with the original decoder."
+        },
+        "greenThreshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Minimum horizontal/vertical green disagreement in normalized sensor units (0–1). Default: 12/255. Larger values preserve more of the original reconstruction."
+        },
+        "chromaThreshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Opposing red/blue tile transitions above this normalized magnitude protect real color boundaries. Default: 80/255."
+        },
+        "directionFloor": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Minimum neighborhood directional confidence required to change green. Default: 0.05."
+        },
+        "directionSpan": {
+          "type": "number",
+          "minimum": 0.01,
+          "maximum": 1,
+          "description": "Confidence interval over which the refinement fades from zero to full strength. Default: 0.25."
+        },
+        "syntheticWeight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Relative contribution of reconstructed RGB-IR samples to neighborhood evidence. Original measured samples always have weight 1. Default: 0.25."
+        }
+      }
     }
   },
   "definitions": {

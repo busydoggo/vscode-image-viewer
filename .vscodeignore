@@ -1,0 +1,18 @@
+# Ship runtime assets and documentation without development tools or large sensor fixtures.
+.git/**
+.github/**
+.vscode/**
+.gitattributes
+.gitignore
+.vscodeignore
+fixtures/**
+design/**
+test/**
+test-results/**
+scripts/**
+node_modules/**
+*.vsix
+**/.DS_Store
+
+# Evaluation artifacts are repository documentation, not extension runtime assets.
+docs/demosaic-quality*

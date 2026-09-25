@@ -68,7 +68,7 @@ button:focus-visible, input:focus, select:focus { outline: 1px solid var(--accen
 .separator { height: 15px; width: 1px; background: var(--line); margin: 0 7px; }#zoom { font-size: 11px; width: 43px; text-align: center; font-variant-numeric: tabular-nums; color: var(--muted); }
 #viewport { flex: 1; min-height: 0; overflow: hidden; position: relative; cursor: grab; outline: none; background-color: var(--vscode-editor-background, #16191e); background-image: linear-gradient(45deg, #80808009 25%, transparent 25%), linear-gradient(-45deg, #80808009 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #80808009 75%), linear-gradient(-45deg, transparent 75%, #80808009 75%); background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0; }
 #viewport:focus-visible { box-shadow: inset 0 0 0 1px var(--accent); }#viewport.dragging { cursor: grabbing; }
-#canvas { position: absolute; top: 0; left: 0; image-rendering: pixelated; box-shadow: 0 8px 40px #0003; }
+#canvas, #scaledCanvas { position: absolute; top: 0; left: 0; image-rendering: pixelated; box-shadow: 0 8px 40px #0003; }
 #pixelGrid { position: absolute; pointer-events: none; background-image: linear-gradient(to right, #0009 1px, #fff6 1px, #fff6 2px, transparent 2px), linear-gradient(to bottom, #0009 1px, #fff6 1px, #fff6 2px, transparent 2px); }
 #pixelRulers { position: absolute; inset: var(--toolbar-height) 0 0; pointer-events: none; }
 #rulerX, #rulerY { position: absolute; top: 0; left: 0; }
@@ -233,3 +233,6 @@ body.vscode-high-contrast .playback, body.vscode-high-contrast-light .playback {
 body:is(.vscode-high-contrast, .vscode-high-contrast-light) .viewer-toolbar :is(.tools button, .toolbar-icon-label) { background: var(--vscode-editor-background); border-color: var(--vscode-contrastBorder, currentColor); box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
 body:is(.vscode-high-contrast, .vscode-high-contrast-light) .viewer-toolbar :is(.tools button, .toolbar-icon-label)::before { display: none; }
 body:is(.vscode-high-contrast, .vscode-high-contrast-light) .viewer-toolbar .toolbar-icon { filter: none; }
+
+/* The reduced display is decorative; native canvas coordinates remain authoritative. */
+#scaledCanvas { pointer-events: none; image-rendering: auto; }

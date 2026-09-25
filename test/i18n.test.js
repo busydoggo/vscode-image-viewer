@@ -73,7 +73,8 @@ test('manifest translations are generated from the same catalogs', () => {
 test('localized demosaic schemas resolve manifest URLs and preserve all validation constraints', () => {
   const template = require('../media/demosaic-schema.json');
   const keys = manifestKeys(template);
-  assert.equal(keys.length, 8);
+  // Include the anti-alias group and its six editable coefficient descriptions.
+  assert.equal(keys.length, 15);
   function constraints(value) {
     if (Array.isArray(value)) return value.map(constraints);
     if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value)

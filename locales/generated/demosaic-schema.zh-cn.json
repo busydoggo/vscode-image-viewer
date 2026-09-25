@@ -65,6 +65,55 @@
           "$ref": "#/definitions/group"
         }
       }
+    },
+    "antiAlias": {
+      "type": "object",
+      "description": "保守的方向抗锯齿修正。旧配置文件使用内置默认值。",
+      "additionalProperties": false,
+      "required": [
+        "enabled",
+        "greenThreshold",
+        "chromaThreshold",
+        "directionFloor",
+        "directionSpan",
+        "syntheticWeight"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "在方向候选分歧较大时稳定绿色重建；关闭可对比原有解码效果。"
+        },
+        "greenThreshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "触发修正的水平/垂直绿色候选最小差值，使用归一化传感器数值（0–1）。默认 12/255。数值越大，保留原重建的区域越多。"
+        },
+        "chromaThreshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "红蓝通道反向变化超过此归一化幅度时，保护真实颜色边界。默认 80/255。"
+        },
+        "directionFloor": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "允许修正绿色重建的最小邻域方向置信度。默认 0.05。"
+        },
+        "directionSpan": {
+          "type": "number",
+          "minimum": 0.01,
+          "maximum": 1,
+          "description": "修正强度从零到完全生效的置信度区间。默认 0.25。"
+        },
+        "syntheticWeight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "RGB-IR 补出采样在邻域判断中的相对权重。原始实测采样的权重始终为 1。默认 0.25。"
+        }
+      }
     }
   },
   "definitions": {

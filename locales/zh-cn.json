@@ -196,5 +196,12 @@
   "demosaic.schema.url": "./locales/generated/demosaic-schema.zh-cn.json",
   "viewer.jpegRepair": "JPEG 边缘修复",
   "viewer.jpegRepairTitle": "JPEG 边缘与角点修复（仅预览）。点击切换，与原始解码对比。",
-  "viewer.previewRgb": "预览 RGB8"
+  "viewer.previewRgb": "预览 RGB8",
+  "demosaic.schema.antiAlias": "保守的方向抗锯齿修正。旧配置文件使用内置默认值。",
+  "demosaic.schema.antiAliasEnabled": "在方向候选分歧较大时稳定绿色重建；关闭可对比原有解码效果。",
+  "demosaic.schema.greenThreshold": "触发修正的水平/垂直绿色候选最小差值，使用归一化传感器数值（0–1）。默认 12/255。数值越大，保留原重建的区域越多。",
+  "demosaic.schema.chromaThreshold": "红蓝通道反向变化超过此归一化幅度时，保护真实颜色边界。默认 80/255。",
+  "demosaic.schema.directionFloor": "允许修正绿色重建的最小邻域方向置信度。默认 0.05。",
+  "demosaic.schema.directionSpan": "修正强度从零到完全生效的置信度区间。默认 0.25。",
+  "demosaic.schema.syntheticWeight": "RGB-IR 补出采样在邻域判断中的相对权重。原始实测采样的权重始终为 1。默认 0.25。"
 }

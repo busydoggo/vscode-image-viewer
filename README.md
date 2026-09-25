@@ -103,6 +103,14 @@ For axis-aligned corners, Bayer correction covers a 6×6 neighborhood and RGB-IR
 
 An I position has no direct RGB sample. Equally supported RGB-IR corner positions prefer boundaries aligned with the original 2×2 cells, consistent with the straight-edge convention. This is an explicit reconstruction assumption: the true edge can remain ambiguous by one pixel. Flat-region fitting does not imply exact recovery of arbitrary textures or diagonal edges. No sensor-specific IR crosstalk correction, white balance, learned model or color calibration is applied.
 
+### Conservative anti-alias refinement and display reduction
+
+Green reconstruction now checks horizontal/vertical color-difference consistency over a 5×5 neighborhood before blending disagreeing candidates. The refinement fades with directional confidence and preserves low-disagreement areas, exact plateaus, evidence-backed corner neighborhoods and strong opposing red/blue transitions. It retains the eight-ray direction policies and every measured sample. Temporary filter planes use 256×256 tiles with an eight-pixel halo; translation tests cover tile seams. This is a conservative GBTF-inspired refinement, **not a full ARI implementation**.
+
+For RGB-IR, the virtual Bayer image carries a measured/reconstructed confidence mask. The new stage does not directly revise green at synthetic red/blue centers, and synthetic neighbors contribute less to its direction scores. IR values remain excluded. The optional `antiAlias` object in the coefficient file controls `enabled`, `greenThreshold`, `chromaThreshold`, `directionFloor`, `directionSpan`, and `syntheticWeight`; hover descriptions explain the defaults. Older files without this object inherit the defaults. Set `antiAlias.enabled` to `false` to compare with the previous reconstruction.
+
+Fit reduction integrates the covered source-pixel area into a separate display canvas, accounting for device pixel density and premultiplied alpha. Native pixels and inspection values remain unchanged. Integer zoom uses pixel-exact rendering; fractional enlargement uses smooth rendering. The full-frame benchmark, limitations and reproduction commands are in [the quality report](docs/demosaic-quality.md).
+
 ### Direction and strength coefficients
 
 The toolbar's sliders icon opens `demosaic-coefficients.json` beside the image. This file lives in the extension's VS Code **global storage directory**, survives extension updates, and applies to all images in that VS Code profile. Save to re-render open CFA images. Invalid JSON or coefficients keep the last valid configuration and report an error; the editor provides completion, ranges, and field descriptions. Delete the file to restore defaults; opening it again recreates it from `media/demosaic-defaults.json`.

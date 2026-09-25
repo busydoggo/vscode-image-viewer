@@ -196,5 +196,12 @@
   "demosaic.schema.url": "./locales/generated/demosaic-schema.en.json",
   "viewer.jpegRepair": "JPEG Edge Repair",
   "viewer.jpegRepairTitle": "JPEG edge and corner repair (preview only). Toggle to compare with the original decode.",
-  "viewer.previewRgb": "Preview RGB8"
+  "viewer.previewRgb": "Preview RGB8",
+  "demosaic.schema.antiAlias": "Conservative directional anti-alias refinement. Older files use the built-in defaults.",
+  "demosaic.schema.antiAliasEnabled": "Stabilize green reconstruction where directional candidates disagree; disable for a comparison with the original decoder.",
+  "demosaic.schema.greenThreshold": "Minimum horizontal/vertical green disagreement in normalized sensor units (0–1). Default: 12/255. Larger values preserve more of the original reconstruction.",
+  "demosaic.schema.chromaThreshold": "Opposing red/blue tile transitions above this normalized magnitude protect real color boundaries. Default: 80/255.",
+  "demosaic.schema.directionFloor": "Minimum neighborhood directional confidence required to change green. Default: 0.05.",
+  "demosaic.schema.directionSpan": "Confidence interval over which the refinement fades from zero to full strength. Default: 0.25.",
+  "demosaic.schema.syntheticWeight": "Relative contribution of reconstructed RGB-IR samples to neighborhood evidence. Original measured samples always have weight 1. Default: 0.25."
 }
