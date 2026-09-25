@@ -1,0 +1,176 @@
+{
+  "name": "sensor-image-viewer",
+  "displayName": "%app.brand%",
+  "description": "%app.description%",
+  "version": "0.1.0",
+  "publisher": "local-tools",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.106.0"
+  },
+  "categories": [
+    "Visualization",
+    "Other"
+  ],
+  "keywords": [
+    "raw",
+    "yuv",
+    "cfa",
+    "rgb-ir",
+    "image"
+  ],
+  "main": "./src/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "check": "node scripts/check.js",
+    "fixtures": "node scripts/fixtures.js",
+    "preview": "node scripts/preview.js",
+    "package": "node scripts/package.js",
+    "localize": "node scripts/localize.js",
+    "fixtures:scenes": "node scripts/scene-fixtures.js",
+    "fixtures:colorchecker": "node scripts/colorchecker-fixtures.js"
+  },
+  "contributes": {
+    "configurationDefaults": {
+      "workbench.editorAssociations": {
+        "*.jpg": "sensorViewer.image",
+        "*.jpeg": "sensorViewer.image",
+        "*.png": "sensorViewer.image",
+        "*.raw": "sensorViewer.image",
+        "*.y": "sensorViewer.image",
+        "*.yuv": "sensorViewer.image",
+        "*.uv": "sensorViewer.image"
+      }
+    },
+    "commands": [
+      {
+        "command": "sensorViewer.import",
+        "title": "%command.import%",
+        "category": "%app.brand%",
+        "icon": "$(add)"
+      },
+      {
+        "command": "sensorViewer.open",
+        "title": "%command.open%",
+        "category": "%app.brand%"
+      },
+      {
+        "command": "sensorViewer.remove",
+        "title": "%command.remove%",
+        "category": "%app.brand%",
+        "icon": "$(close)"
+      },
+      {
+        "command": "sensorViewer.refresh",
+        "title": "%command.refresh%",
+        "category": "%app.brand%",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "sensorViewer.properties",
+        "title": "%command.properties%",
+        "category": "%app.brand%",
+        "icon": "$(settings-gear)"
+      },
+      {
+        "command": "sensorViewer.coefficients",
+        "title": "%command.coefficients%",
+        "category": "%app.brand%",
+        "icon": "$(settings)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "sensor-images",
+          "title": "%app.name%",
+          "icon": "media/images.svg"
+        }
+      ],
+      "secondarySidebar": [
+        {
+          "id": "sensor-properties",
+          "title": "%app.properties%",
+          "icon": "media/settings.svg"
+        }
+      ]
+    },
+    "views": {
+      "sensor-images": [
+        {
+          "id": "sensorViewer.files",
+          "name": "%app.files%"
+        }
+      ],
+      "sensor-properties": [
+        {
+          "type": "webview",
+          "id": "sensorViewer.inspector",
+          "name": "%app.properties%"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "sensorViewer.files",
+        "contents": "%manifest.welcome%"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "sensorViewer.import",
+          "when": "view == sensorViewer.files",
+          "group": "navigation"
+        },
+        {
+          "command": "sensorViewer.refresh",
+          "when": "view == sensorViewer.files",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "sensorViewer.remove",
+          "when": "view == sensorViewer.files && viewItem == sensorImage",
+          "group": "inline"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "sensorViewer.open",
+          "when": "!explorerResourceIsFolder",
+          "group": "navigation@20"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "sensorViewer.properties",
+          "when": "activeCustomEditorId == sensorViewer.image",
+          "group": "navigation"
+        }
+      ]
+    },
+    "customEditors": [
+      {
+        "viewType": "sensorViewer.image",
+        "displayName": "%app.name%",
+        "selector": [
+          {
+            "filenamePattern": "*"
+          }
+        ],
+        "priority": "option"
+      }
+    ],
+    "jsonValidation": [
+      {
+        "fileMatch": "**/demosaic-coefficients.json",
+        "url": "%demosaic.schema.url%"
+      }
+    ]
+  }
+}

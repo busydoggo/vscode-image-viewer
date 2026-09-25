@@ -1,0 +1,24 @@
+{
+  "tool": "Built-in image_gen",
+  "use": "Synthetic CFA complex-scene reference images",
+  "prompts": [
+    {
+      "id": "traffic",
+      "prompt": "Use case: photorealistic-natural. Asset type: synthetic complex-scene reference image for a Bayer CFA demosaicing test suite. Produce one full-bleed landscape photograph, approximately 1536 by 1024 pixels, with sharp deep focus across the frame, natural daylight, realistic continuous tones and rich fine detail. Include differently angled edges, colorful boundaries, smooth gradients, detailed textures, highlights and shadows. No collage, no panels, no captions, no watermark, no logos, no graphic overlays, no stylized painting, no artificial blur. Primary request: a busy urban traffic intersection viewed slightly from above at a street corner. Cars, buses, cyclists and pedestrians crossing a zebra crossing, lane markings extending in perspective, traffic lights, building windows, metal railings and leafy trees. Coherent realistic street geometry, varied colored vehicles and clothes, crisp asphalt texture and diagonal painted road lines. This is a fictional everyday city scene.",
+      "edits": [
+        {
+          "tool": "Built-in image_gen",
+          "prompt": "Use case: precise-object-edit. Edit target: the supplied traffic-reference.png. Add clearly visible, prominent, realistic road traffic lights to this traffic intersection photograph. The existing distant signals are too small to read. Place a large foreground traffic signal on a plausible pole/mast near the right upper-middle of the frame, with three vertically stacked circular red, amber and green lenses in a black housing with sun visors; the red light is brightly lit, amber and green unlit but their lens colors discernible. Make the housing about 160-200 pixels tall in the 1536x1024 image so the circular lamp and crisp red-to-dark edges are obvious for CFA demosaicing testing. Also show a separate medium-size signal for the perpendicular traffic direction, displaying green, spatially separated and plausibly oriented. Only one light illuminated per signal. Integrate supports, scale, natural daylight, perspective and shadows realistically. Keep the same busy intersection, cars, pedestrians, zebra crossings, detailed buildings, trees, camera framing and photo style as closely as possible. Preserve exact 1536x1024 resolution. No collage, no overlays, no watermark, no captions. Main requirement: traffic lights must be unmistakably visible when the entire image is fitted to the viewer."
+        }
+      ]
+    },
+    {
+      "id": "wildlife",
+      "prompt": "Use case: photorealistic-natural. Asset type: synthetic complex-scene reference image for a Bayer CFA demosaicing test suite. Produce one full-bleed landscape photograph, approximately 1536 by 1024 pixels, with sharp deep focus across the frame, natural daylight, realistic continuous tones and rich fine detail. Include differently angled edges, colorful boundaries, smooth gradients, detailed textures, highlights and shadows. No collage, no panels, no captions, no watermark, no logos, no graphic overlays, no stylized painting, no artificial blur. Primary request: a natural wildlife scene at an African savanna watering hole, a few zebras and antelope in the middle and foreground, a giraffe farther back, water reflecting vegetation, green and dry grasses, scattered acacia branches. Clearly visible fur and stripe detail, fine grass blades, reflections and varied earth tones. Wide environmental wildlife photography with coherent anatomy and natural animal behavior."
+    },
+    {
+      "id": "football",
+      "prompt": "Use case: photorealistic-natural. Asset type: synthetic complex-scene reference image for a Bayer CFA demosaicing test suite. Produce one full-bleed landscape photograph, approximately 1536 by 1024 pixels, with sharp deep focus across the frame, natural daylight, realistic continuous tones and rich fine detail. Include differently angled edges, colorful boundaries, smooth gradients, detailed textures, highlights and shadows. No collage, no panels, no captions, no watermark, no logos, no graphic overlays, no stylized painting, no artificial blur. Primary request: an association football match on a grass pitch, viewed from near a sideline at modest elevation. Several adult players in contrasting red and blue unbranded kits compete for a football; a white goal with detailed netting is visible beyond them, painted white pitch lines at different angles, distant stadium spectators. Crisp grass and fabric textures, plausible anatomy, realistic ball and coherent field perspective, ordinary daylight sports photography."
+    }
+  ]
+}

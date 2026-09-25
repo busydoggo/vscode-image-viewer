@@ -1,0 +1,15 @@
+{
+  "app.brand": "Sensor Image Viewer",
+  "app.description": "图像观察器：PNG / JPG / RAW CFA / RGB-IR / YUV，支持自定义布局与像素深度。",
+  "app.files": "图像文件",
+  "app.name": "图像观察器",
+  "app.properties": "图像属性",
+  "command.coefficients": "编辑解马赛克系数",
+  "command.import": "导入图像文件…",
+  "command.open": "用图像观察器打开",
+  "command.properties": "切换图像属性",
+  "command.refresh": "重新读取图像",
+  "command.remove": "从列表移除",
+  "demosaic.schema.url": "./locales/generated/demosaic-schema.zh-cn.json",
+  "manifest.welcome": "导入图像，开始观察像素。\n[导入文件](command:sensorViewer.import)\n支持 PNG、JPG、RAW、YUV 及任意后缀。"
+}

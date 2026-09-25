@@ -1,0 +1,8 @@
+# Preserve sensor fixtures as binary data without line-ending normalization.
+*.raw binary
+*.yuv binary
+*.y binary
+*.uv binary
+*.bin binary
+*.png binary
+*.jpg binary

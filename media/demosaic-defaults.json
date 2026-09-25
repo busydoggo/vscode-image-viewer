@@ -1,0 +1,183 @@
+{
+  "version": 1,
+  "regularization": 1,
+  "variationPenalty": 2,
+  "directions": {
+    "0": {
+      "levels": [
+        {
+          "strength": 0,
+          "uniform": 0.95,
+          "edgePower": 0.1,
+          "tangentBias": 0
+        },
+        {
+          "strength": 0.004,
+          "uniform": 0.25,
+          "edgePower": 0.7,
+          "tangentBias": 0.01
+        },
+        {
+          "strength": 0.016,
+          "uniform": 0,
+          "edgePower": 1,
+          "tangentBias": 0.02
+        }
+      ]
+    },
+    "45": {
+      "levels": [
+        {
+          "strength": 0,
+          "uniform": 0.95,
+          "edgePower": 0.1,
+          "tangentBias": 0
+        },
+        {
+          "strength": 0.004,
+          "uniform": 0.25,
+          "edgePower": 0.7,
+          "tangentBias": 0.01
+        },
+        {
+          "strength": 0.016,
+          "uniform": 0,
+          "edgePower": 1,
+          "tangentBias": 0.02
+        }
+      ]
+    },
+    "90": {
+      "levels": [
+        {
+          "strength": 0,
+          "uniform": 0.95,
+          "edgePower": 0.1,
+          "tangentBias": 0
+        },
+        {
+          "strength": 0.004,
+          "uniform": 0.25,
+          "edgePower": 0.7,
+          "tangentBias": 0.01
+        },
+        {
+          "strength": 0.016,
+          "uniform": 0,
+          "edgePower": 1,
+          "tangentBias": 0.02
+        }
+      ]
+    },
+    "135": {
+      "levels": [
+        {
+          "strength": 0,
+          "uniform": 0.95,
+          "edgePower": 0.1,
+          "tangentBias": 0
+        },
+        {
+          "strength": 0.004,
+          "uniform": 0.25,
+          "edgePower": 0.7,
+          "tangentBias": 0.01
+        },
+        {
+          "strength": 0.016,
+          "uniform": 0,
+          "edgePower": 1,
+          "tangentBias": 0.02
+        }
+      ]
+    },
+    "180": {
+      "levels": [
+        {
+          "strength": 0,
+          "uniform": 0.95,
+          "edgePower": 0.1,
+          "tangentBias": 0
+        },
+        {
+          "strength": 0.004,
+          "uniform": 0.25,
+          "edgePower": 0.7,
+          "tangentBias": 0.01
+        },
+        {
+          "strength": 0.016,
+          "uniform": 0,
+          "edgePower": 1,
+          "tangentBias": 0.02
+        }
+      ]
+    },
+    "225": {
+      "levels": [
+        {
+          "strength": 0,
+          "uniform": 0.95,
+          "edgePower": 0.1,
+          "tangentBias": 0
+        },
+        {
+          "strength": 0.004,
+          "uniform": 0.25,
+          "edgePower": 0.7,
+          "tangentBias": 0.01
+        },
+        {
+          "strength": 0.016,
+          "uniform": 0,
+          "edgePower": 1,
+          "tangentBias": 0.02
+        }
+      ]
+    },
+    "270": {
+      "levels": [
+        {
+          "strength": 0,
+          "uniform": 0.95,
+          "edgePower": 0.1,
+          "tangentBias": 0
+        },
+        {
+          "strength": 0.004,
+          "uniform": 0.25,
+          "edgePower": 0.7,
+          "tangentBias": 0.01
+        },
+        {
+          "strength": 0.016,
+          "uniform": 0,
+          "edgePower": 1,
+          "tangentBias": 0.02
+        }
+      ]
+    },
+    "315": {
+      "levels": [
+        {
+          "strength": 0,
+          "uniform": 0.95,
+          "edgePower": 0.1,
+          "tangentBias": 0
+        },
+        {
+          "strength": 0.004,
+          "uniform": 0.25,
+          "edgePower": 0.7,
+          "tangentBias": 0.01
+        },
+        {
+          "strength": 0.016,
+          "uniform": 0,
+          "edgePower": 1,
+          "tangentBias": 0.02
+        }
+      ]
+    }
+  }
+}
