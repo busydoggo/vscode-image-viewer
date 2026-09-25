@@ -126,6 +126,7 @@
   "viewer.pixelHint": "Scroll to zoom · Drag to pan",
   "status.ready": "Ready",
   "status.decoding": "Decoding…",
+  "status.refining": "Preview · refining…",
   "status.processing": "Processing",
   "status.invalid": "Waiting for Valid Image Parameters",
   "status.adjust": "Adjust the image parameters",

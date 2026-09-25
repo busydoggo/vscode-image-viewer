@@ -126,6 +126,7 @@
   "viewer.pixelHint": "滚轮缩放 · 拖动平移",
   "status.ready": "就绪",
   "status.decoding": "正在解码…",
+  "status.refining": "预览 · 正在优化…",
   "status.processing": "处理中",
   "status.invalid": "等待有效的图像参数",
   "status.adjust": "请调整图像参数",

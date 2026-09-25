@@ -698,7 +698,7 @@
     }
     return { raw: mosaic, pattern: bayerPattern, confidence };
   }
-  function decode(bytes, c, coefficients) {
+  function decode(bytes, c, coefficients, { preview = false } = {}) {
     const info = analyze(c, c.offset + bytes.length);
     if (!info.valid) throw new Error(Object.values(info.errors)[0]);
     // IR-only output reads one original IR sample per complete 2x2 tile, with no demosaicing.
@@ -754,8 +754,9 @@
       for (let y = 0; y < height; y++) for (let x = 0; x < c.width; x++) raw[y * c.width + x] = (read(info.planes[0], x, y) - c.black) / (white - c.black);
       const rgbir = isRgbir(c), sampleStep = 1 / (white - c.black);
       const settings = Demosaic.validate(coefficients || Demosaic.defaults);
-      const visible = rgbir && c.width >= 2 && height >= 2 ? rgbirBayer(raw, c.width, height, pattern, sampleStep, settings) : { raw, pattern };
-      let bayer = c.width >= 2 && height >= 2 && ['RGGB', 'BGGR', 'GRBG', 'GBRG'].includes(visible.pattern)
+      // The temporary preview uses local sample interpolation without expensive edge/corner reconstruction.
+      const visible = !preview && rgbir && c.width >= 2 && height >= 2 ? rgbirBayer(raw, c.width, height, pattern, sampleStep, settings) : { raw, pattern };
+      let bayer = !preview && c.width >= 2 && height >= 2 && ['RGGB', 'BGGR', 'GRBG', 'GBRG'].includes(visible.pattern)
         ? bayerInterpolator(visible.raw, c.width, height, visible.pattern, sampleStep, settings, visible.confidence) : null;
       // Correct virtual-lattice errors before display; the correction also bounds edge overshoot.
       if (rgbir && bayer) {

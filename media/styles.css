@@ -88,6 +88,20 @@ button:focus-visible, input:focus, select:focus { outline: 1px solid var(--accen
 .playback input[type=number] { width: 65px; height: 27px; padding: 3px 5px; border: 1px solid var(--vscode-input-border, var(--line)); border-radius: 3px; background: var(--vscode-input-background, #30343b); color: var(--vscode-input-foreground, #eee); font-variant-numeric: tabular-nums; }
 .playback input[aria-invalid=true] { border-color: var(--vscode-editorWarning-foreground, #cca767); }
 #playbackError:not(:empty) { margin-top: 6px; }
+/* A returning light segment signals indeterminate work without filling to a false completion. */
+#status[data-refining="true"] { display: inline-flex; align-items: center; gap: 8px; }
+#status[data-refining="true"]::after {
+  content: ""; flex: 0 0 48px; width: 48px; height: 3px; border-radius: 2px;
+  background-color: var(--line);
+  background-image: linear-gradient(90deg, transparent 35%, var(--vscode-progressBar-background, #75baff) 45% 55%, transparent 65%);
+  background-size: 250% 100%;
+  animation: refinement-progress 1.3s ease-in-out infinite alternate;
+}
+@keyframes refinement-progress { from { background-position: 100% 0; } to { background-position: 0% 0; } }
+/* Keep the activity indicator visible but still when reduced motion is requested. */
+@media (prefers-reduced-motion: reduce) {
+  #status[data-refining="true"]::after { animation: none; background-position: 50% 0; }
+}
 @media (max-width: 500px) { .playback { padding: 8px; }.playback-controls { gap: 8px; }.frame-counter { margin-left: auto; } }
 #comparison { pointer-events: none; position: absolute; top: calc(var(--toolbar-height) + 12px); left: 0; right: 0; display: flex; justify-content: space-around; }#comparison span { font-size: 10px; padding: 4px 10px; background: var(--vscode-editor-background, #181b20); border: 1px solid var(--line); border-radius: 3px; color: var(--muted); letter-spacing: 2px; }
 @media (max-width: 500px) { .viewer-toolbar { padding: 0 8px; }.viewer-footer { gap: 8px; padding: 0 8px; }#status { display: none; } }

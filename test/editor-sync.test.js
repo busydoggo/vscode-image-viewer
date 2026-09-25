@@ -9,7 +9,8 @@ const { createRequire } = require('node:module');
 
 test('toolbar edits remain in their session entry and synchronize with inspector presets and other views', async () => {
   let editor, inspectorProvider, inspectorMessage, saved, coefficientBytes, saveCoefficients, openedDocument;
-  const decodeJobs = [];
+  const decodeJobs = [], deferred = [];
+  let deferDecode = false;
   const file = path.join(__dirname, '../src/extension.js'), load = createRequire(file);
   const noop = () => ({}), tick = () => new Promise(resolve => setImmediate(resolve));
   const uri = name => ({ path: '/images/' + name, fsPath: '/images/' + name, scheme: 'file', toString: () => 'file:///images/' + name });
@@ -38,7 +39,12 @@ test('toolbar edits remain in their session entry and synchronize with inspector
     }
   };
   class Decoder {
-    async decode(job) { decodeJobs.push(job); return { image: 'data:image/png;base64,', width: job.config.width, height: job.config.height, frameId: 1 }; }
+    async decode(job, onPreview) {
+      decodeJobs.push(job);
+      const result = { image: 'data:image/png;base64,', width: job.config.width, height: job.config.height, frameId: 1 };
+      if (deferDecode) return new Promise(resolve => deferred.push({ preview: () => onPreview({ ...result, preview: true }), finish: () => resolve(result) }));
+      return result;
+    }
     dispose() { this.closed = true; }
   }
   const sandbox = { module: { exports: {} }, require: name => name === 'vscode' ? vscode : name === './decoder' ? { Decoder } : load(name) };
@@ -132,6 +138,23 @@ test('toolbar edits remain in their session entry and synchronize with inspector
   reopened.receive({ type: 'ready' }); await tick();
   assert.equal(reopened.messages.find(message => message.type === 'state').entry.config.pattern, 'BGGR');
   assert.ok(saved.every(entry => Object.keys(entry).join() === 'uri'));
+
+  // Deliver both stages of an obsolete decode after a newer refresh has started.
+  deferDecode = true;
+  first.receive({ type: 'refresh' }); await tick();
+  first.receive({ type: 'refresh' }); await tick();
+  const imagesBefore = first.messages.filter(message => message.type === 'image').length;
+  deferred[0].preview(); deferred[0].finish(); await tick();
+  assert.equal(first.messages.filter(message => message.type === 'image').length, imagesBefore);
+  deferred[1].preview();
+  assert.equal(first.messages.at(-1).preview, true);
+  const previewRevision = first.messages.at(-1).revision;
+  deferred[1].finish(); await tick();
+  const images = first.messages.filter(message => message.type === 'image');
+  assert.equal(images.length, imagesBefore + 2);
+  assert.equal(images.at(-1).revision, previewRevision);
+  assert.equal(images.at(-1).preview, undefined);
+
 
 });
 

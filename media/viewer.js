@@ -27,8 +27,14 @@ document.getElementById('app').innerHTML = `
     </div>
     <div id="playbackError" class="field-error" role="status"></div>
   </section>
-  <footer class="viewer-footer"><span id="dimensions">—</span><span id="pixel">${th('viewer.pixelHint')}</span><span id="status">${th('status.ready')}</span></footer>`;
+  <footer class="viewer-footer"><span id="dimensions">—</span><span id="pixel">${th('viewer.pixelHint')}</span><span id="status" role="status" aria-live="polite">${th('status.ready')}</span></footer>`;
 const $ = id => document.getElementById(id);
+// Refinement has no reliable total-work estimate; animate activity without claiming a percentage.
+function setViewerStatus(key) {
+  $('status').textContent = t(key);
+  $('status').setAttribute('data-refining', String(key === 'status.refining'));
+}
+
 const toolbar = document.querySelector('.viewer-toolbar');
 function toolbarInset() { return toolbar.getBoundingClientRect().height; }
 let configEntry;
@@ -355,7 +361,7 @@ window.addEventListener('message', event => {
     return;
   }
   if (data.type === 'resetPlayback') {
-    generation++; player.reset(); $('playbackError').textContent = ''; clearPixel();
+    generation++; player.reset(); setViewerStatus('status.processing'); $('playbackError').textContent = ''; clearPixel();
     for (const id of ['frameNumber', 'fps']) { $(id).setAttribute('aria-invalid', 'false'); $(id).blur(); }
   }
   if (data.type === 'pausePlayback') { player.reset(data.sequence); }
@@ -364,25 +370,26 @@ window.addEventListener('message', event => {
     if (data.sequence) epoch = data.sequence.epoch;
     if (data.resetPlayback) player.reset(data.sequence);
     if (!data.preserveImage || !valid) { valid = false; canvas.hidden = true; scaledCanvas.hidden = true; $('comparison').hidden = true; message(t('status.decoding')); }
-    $('status').textContent = t('status.processing');
+    setViewerStatus('status.processing');
   }
-  if (data.type === 'invalid') { generation++; valid = false; player.reset(); canvas.hidden = true; scaledCanvas.hidden = true; $('comparison').hidden = true; message(t('status.invalid'), data.message); $('status').textContent = t('status.adjust'); $('dimensions').textContent = '—'; }
+  if (data.type === 'invalid') { generation++; valid = false; player.reset(); canvas.hidden = true; scaledCanvas.hidden = true; $('comparison').hidden = true; message(t('status.invalid'), data.message); setViewerStatus('status.adjust'); $('dimensions').textContent = '—'; }
   if (data.type !== 'image') return;
   if (!player.canPresent(data.requestId)) return;
   jpegFrame = undefined; jpegApplied = false; jpegRepair.hidden = true; jpegPaint++;
   const token = ++generation; const image = new Image();
   image.onload = () => {
     if (token !== generation) return;
-    if (image.naturalWidth * image.naturalHeight > SensorCore.MAX_PIXELS * (data.display === 'side' ? 2 : 1)) { valid = false; player.reset(); canvas.hidden = true; scaledCanvas.hidden = true; message(t('error.previewLimit'), t('error.maxPixels')); return; }
+    if (image.naturalWidth * image.naturalHeight > SensorCore.MAX_PIXELS * (data.display === 'side' ? 2 : 1)) { valid = false; player.reset(); canvas.hidden = true; scaledCanvas.hidden = true; message(t('error.previewLimit'), t('error.maxPixels')); setViewerStatus('status.readFailed'); return; }
     const changedSize = canvas.width !== image.naturalWidth || canvas.height !== image.naturalHeight;
     canvas.width = image.naturalWidth; canvas.height = image.naturalHeight; ctx.drawImage(image, 0, 0);
     presentationRevision++; valid = true; canvas.hidden = false; $('message').hidden = true;
-    displayedRevision = data.revision; rawPixels = ['CFA', 'YUV'].includes(data.kind); hoverTarget = undefined;
+    displayedRevision = data.revision; rawPixels = !data.preview && ['CFA', 'YUV'].includes(data.kind); hoverTarget = undefined;
     side = data.display === 'side'; $('comparison').hidden = !side;
     $('dimensions').textContent = `${side ? canvas.width / 2 : canvas.width} × ${canvas.height}${side ? ' · RGB | IR' : ''}`;
-    $('status').textContent = t('status.readOnly');
+    setViewerStatus(data.preview ? 'status.refining' : 'status.readOnly');
     if (data.sequence) epoch = data.sequence.epoch;
-    player.present(data.sequence, data.requestId);
+    // Drafts must not release playback backpressure or trigger another frame request.
+    if (!data.preview) player.present(data.sequence, data.requestId);
     if (changedSize || fitMode) fit(); else layout();
     // Lossless PNG and sensor reconstructions retain untouched native pixels for inspection.
     if (data.kind === 'JPEG') {
@@ -391,7 +398,7 @@ window.addEventListener('message', event => {
     }
     vscode.postMessage({ type: 'metadata', revision: data.revision, width: canvas.width, height: canvas.height });
   };
-  image.onerror = () => { if (token !== generation) return; valid = false; player.reset(); canvas.hidden = true; scaledCanvas.hidden = true; message(t('error.decodeTitle'), t('error.decodeHint')); $('status').textContent = t('status.readFailed'); vscode.postMessage({ type: 'imageError', revision: data.revision }); };
+  image.onerror = () => { if (token !== generation) return; valid = false; player.reset(); canvas.hidden = true; scaledCanvas.hidden = true; message(t('error.decodeTitle'), t('error.decodeHint')); setViewerStatus('status.readFailed'); vscode.postMessage({ type: 'imageError', revision: data.revision }); };
   // VS Code serves file assets on a separate origin with CORS headers; opt in before canvas reads.
   image.crossOrigin = 'anonymous';
   image.src = data.source;

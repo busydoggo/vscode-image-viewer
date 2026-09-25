@@ -105,6 +105,8 @@ An I position has no direct RGB sample. Equally supported RGB-IR corner position
 
 ### Conservative anti-alias refinement and display reduction
 
+RAW previews appear in two stages: fast local interpolation first, followed by the full-quality reconstruction. The replacement preserves zoom and pan; playback advances only after the final frame is ready.
+
 Green reconstruction now checks horizontal/vertical color-difference consistency over a 5×5 neighborhood before blending disagreeing candidates. The refinement fades with directional confidence and preserves low-disagreement areas, exact plateaus, evidence-backed corner neighborhoods and strong opposing red/blue transitions. It retains the eight-ray direction policies and every measured sample. Temporary filter planes use 256×256 tiles with an eight-pixel halo; translation tests cover tile seams. This is a conservative GBTF-inspired refinement, **not a full ARI implementation**.
 
 For RGB-IR, the virtual Bayer image carries a measured/reconstructed confidence mask. The new stage does not directly revise green at synthetic red/blue centers, and synthetic neighbors contribute less to its direction scores. IR values remain excluded. The optional `antiAlias` object in the coefficient file controls `enabled`, `greenThreshold`, `chromaThreshold`, `directionFloor`, `directionSpan`, and `syntheticWeight`; hover descriptions explain the defaults. Older files without this object inherit the defaults. Set `antiAlias.enabled` to `false` to compare with the previous reconstruction.

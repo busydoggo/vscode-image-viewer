@@ -118,7 +118,11 @@ function activate(context) {
       }
       if (revision !== entry.revision) return;
       if (!entry.decoder || entry.decoder.closed) entry.decoder = new Decoder();
-      const result = await entry.decoder.decode(workerData);
+      const result = await entry.decoder.decode(workerData, preview => {
+        // A cancelled file/layout/frame revision must never replace the newer view.
+        if (revision !== entry.revision) return;
+        broadcast(entry, { type: 'image', preview: true, source: preview.image, width: preview.width, height: preview.height, name: entry.name, kind: entry.config.format, display: entry.config.format === 'CFA' && Core.isRgbir(entry.config) ? entry.config.display : 'rgb', revision, sequence: { ...seq, fps: entry.fps }, requestId });
+      });
       if (revision !== entry.revision) return;
       entry.frame = seq.frame;
       entry.metadata = { width: result.width, height: result.height };

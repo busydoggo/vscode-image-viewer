@@ -14,6 +14,12 @@ async function run(job) {
       return;
     }
     const bytes = job.path ? await readRange(job.path, job.readOffset ?? job.config.offset, job.length) : job.bytes;
+    // Post a cheap full-size preview before blocking this worker on high-quality demosaicing.
+    // YUV and IR-only already decode directly and do not need a duplicate pass.
+    if (job.progressive && job.config.format === 'CFA' && !(isRgbir(job.config) && job.config.display === 'ir')) {
+      const preview = decode(bytes, job.config, job.coefficients, { preview: true });
+      parentPort.postMessage({ id: job.id, preview: true, image: 'data:image/png;base64,' + encodePng(preview.width, preview.height, preview.rgba).toString('base64'), width: preview.width, height: preview.height });
+    }
     // Carry the current coefficient snapshot into every frame, including RGB-IR reconstruction.
     const result = decode(bytes, job.config, job.coefficients);
     const read = pixelReader(bytes, job.config, result.info);
